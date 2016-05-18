@@ -1,3 +1,37 @@
+var verif = document.querySelector('#name');
+
+function verification(){
+  var element = verif.value;
+  if(element=="" || element.length<3)
+  {
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+
+
+var audio = document.querySelector('.audio');
+
+var again_button = document.querySelector('.again-button');
+again_button.addEventListener('click', function(){
+  restart();
+})
+
+var leaderboard_screen = document.querySelector('.leaderboard-screen');
+var leaderboard_button = document.querySelector('.leaderboard-button');
+leaderboard_button.addEventListener('click', function(){
+  leaderboard_screen.classList.add('pop-up-animation');
+})
+
+var leaderboard_back = document.querySelector('.back-button');
+leaderboard_back.addEventListener('click', function(){
+  leaderboard_screen.classList.remove('pop-up-animation');
+  restart();
+})
+
 var canvas = document.getElementById('canvas1');
 var context = canvas.getContext("2d");
 canvas.oncontextmenu = function(){return false;}
@@ -40,10 +74,10 @@ function init(){
   sloth = Math.floor((canvas.width - size) / size);
   controlsUpdate();
   
-  document.getElementById('cTower1Bt').value = "Place laser tower ("+numberFormat(towerCosts[0])+")";
-  document.getElementById('cTower2Bt').value = "Place AOE tower ("+numberFormat(towerCosts[1])+")";
-  document.getElementById('cTower3Bt').value = "Place slow tower ("+numberFormat(towerCosts[2])+")";
-  document.getElementById('cTower4Bt').value = "Place wall ("+numberFormat(towerCosts[3])+")";
+  /*document.getElementById('cTower1Bt').value = "Placer une tourelle ("+numberFormat(towerCosts[0])+")";
+  document.getElementById('cTower2Bt').value = "Placer une tourelle AOE ("+numberFormat(towerCosts[1])+")";
+  document.getElementById('cTower3Bt').value = "Placer une tourelle ralentissante ("+numberFormat(towerCosts[2])+")";
+  document.getElementById('cTower4Bt').value = "Placer un mur ("+numberFormat(towerCosts[3])+")";*/
 
   genPath();
   //path = new Array(new Point(0,0), new Point(0,1), new Point(0,2));
@@ -144,7 +178,16 @@ function wallTower(x,y){
       context.lineTo(-slotw/2, -sloth/2);
       context.stroke();
     }
-    context.fillStyle = "#D04532";
+    
+    var mur = new Image;
+    mur.src = "src/images/mur.png";
+    
+    context.beginPath();
+    context.drawImage(mur, -35, -35);
+    context.fill();
+    
+    
+    /*context.fillStyle = "#D04532";
     context.strokeStyle = "#A62727";
     
     context.lineWidth = 2;
@@ -162,7 +205,7 @@ function wallTower(x,y){
 	  context.moveTo(-0.4*slotw + (j + (i%2)*0.5) * (0.8*slotw)/3, -0.4*sloth + i*(0.8*sloth)/5);
 	  context.lineTo(-0.4*slotw + (j + (i%2)*0.5) * (0.8*slotw)/3, -0.4*sloth + (i+1)*(0.8*sloth)/5);
       }
-    }
+    }*/
     context.stroke();
     
     context.restore();
@@ -224,11 +267,18 @@ function slowTower(x,y){
       context.lineTo(0.1*slotw/2, -0.1*sloth/2);
     }
     context.closePath();
-    context.fillStyle = "#86F5FF";
+    
+    var tourelle3 = new Image;
+    tourelle3.src = "src/images/tourelle3.png";
+    
+    context.beginPath();
+    context.drawImage(tourelle3, -35, -35);
+    
+    /*context.fillStyle = "#86F5FF";
     context.lineWidth = 2;
-    context.strokeStyle = "#4CC4C2";
+    context.strokeStyle = "#4CC4C2";*/
     context.fill();
-    context.stroke();
+    /*context.stroke();*/
     context.restore();
     
     if(this.sel){
@@ -294,16 +344,20 @@ function aoeTower(x,y){
   this.draw = function(){
     context.save();
     context.translate(Math.floor(this.getXCenter()), Math.floor(this.getYCenter()));
-
     
-    context.fillStyle = "#B0F";
+    var tourelle2 = new Image;
+    tourelle2.src = "src/images/tourelle2.png";
+    
+    /*context.fillStyle = "#B0F";*/
     context.beginPath();
-    context.arc(0,0, Math.floor(Math.min(slotw, sloth) * 0.45), 0, Math.PI*2, false);
+    /*context.arc(0,0, Math.floor(Math.min(slotw, sloth) * 0.45), 0, Math.PI*2, false);*/
+    context.beginPath();
+    context.drawImage(tourelle2, -25, -17);
     context.fill();
-    context.lineWidth = 2;
+    /*context.lineWidth = 2;
     context.strokeStyle = "#8800B9";
     context.stroke();
-    context.fillStyle = "#000";
+    context.fillStyle = "#000";*/
     
     if(this.charge >= 0){
       context.globalAlpha = 0.4;
@@ -326,15 +380,15 @@ function aoeTower(x,y){
     if(this.charge == 0) {
       this.anim = (this.anim +1) % 360;
     }
-    context.rotate(Math.PI * this.anim / 180);
-    context.beginPath();
-    context.moveTo(0,0);
+   /* context.rotate(Math.PI * this.anim / 180);*/
+context.beginPath();
+/*    context.moveTo(0,0);
     context.arc(0,0, Math.floor(Math.min(slotw, sloth) * 0.33), 0, Math.PI * 2 / 6, false);
     context.lineTo(0,0);
     context.arc(0,0, Math.floor(Math.min(slotw, sloth) * 0.33), Math.PI*4 / 6, Math.PI*6 / 6, false);
     context.lineTo(0,0);
     context.arc(0,0, Math.floor(Math.min(slotw, sloth) * 0.33), Math.PI*8 / 6, Math.PI*10 / 6, false);
-    context.lineTo(0,0);
+    context.lineTo(0,0);*/
     context.fill();
     context.stroke();
     context.restore();
@@ -411,27 +465,30 @@ function laserTower(x,y){
   this.draw = function(){
     context.save();
     context.translate(Math.floor(this.getXCenter()), Math.floor(this.getYCenter()));
-
     
-    context.fillStyle = "#FF0000";
+    var tourelle1 = new Image;
+    tourelle1.src = "src/images/tourelle1.png";
+    
+/*    context.fillStyle = "#FF0000";
     context.lineWidth = 2;
-    context.strokeStyle = "#880000";
+    context.strokeStyle = "#880000";*/
     context.beginPath();
-    context.moveTo(-0.40*slotw, 0.42*sloth);
+    context.drawImage(tourelle1, -13, -20);
+    /*context.moveTo(-0.40*slotw, 0.42*sloth);
     context.lineTo(-0.15*slotw, 0.2*sloth);
     context.lineTo(0, -0.2*sloth);
     context.lineTo(0.15*slotw, 0.2*sloth);
     context.lineTo(0.4*slotw, 0.42*sloth);
-    context.lineTo(-0.4*slotw, 0.42*sloth);
+    context.lineTo(-0.4*slotw, 0.42*sloth);*/
     context.fill();
-    context.stroke();
+  /*  context.stroke();*/
     
     if(this.atk){
       context.fillStyle = "#FF0";
       context.strokeStyle = "#D3D300";
     }
     context.beginPath();
-    context.arc(0, -0.2*sloth, Math.floor(Math.min(slotw, sloth) * 0.2), 0, 2*Math.PI, false);
+   /* context.arc(0, -0.2*sloth, Math.floor(Math.min(slotw, sloth) * 0.2), 0, 2*Math.PI, false);*/
     context.fill();
     context.stroke();
     
@@ -467,7 +524,7 @@ function laserTower(x,y){
 	context.lineWidth = 2;
 	context.moveTo(this.x*slotw + this.x + slotw/2, this.y*sloth + this.y + sloth/2 - 0.2*sloth);
 	context.lineTo(mobs[i].getXCenter(), mobs[i].getYCenter());
-	context.strokeStyle = "#FF0";
+	context.strokeStyle = "red";
 	context.stroke();
 	break;
       }
@@ -498,20 +555,24 @@ function mob(level){
   }
   
   this.draw = function(){
+    
+    var soldat = new Image();
+    soldat.src = 'src/images/soldat.png';
+    
     context.save();
     context.translate(Math.floor(this.getXCenter()), Math.floor(this.getYCenter()));
     
     context.fillStyle = "#00B615";
     context.beginPath();
-    context.arc(0,0, Math.floor(Math.min(slotw, sloth) * 0.2), 0, Math.PI*2, false);
+    context.drawImage(soldat,-5, -5)
     context.fill();
-    if(this.hp < this.maxhp){
+   /* if(this.hp < this.maxhp){
       context.fillStyle = "#000";
       context.beginPath();
       context.moveTo(0,0);
       context.arc(0,0, Math.floor(Math.min(slotw, sloth) * 0.2), Math.PI*2 * (this.hp/this.maxhp), Math.PI*2, false);
       context.fill();
-    }
+    }*/
     
     context.restore();
   }
@@ -736,18 +797,18 @@ function upgrade(){
 function controlsUpdate(){
   document.getElementById('upgradebutton').disabled = true;
   document.getElementById('sellbutton').disabled = true;
-  document.getElementById('upgradebutton').value = "Upgrade";
-  document.getElementById('sellbutton').value = "Sell";
+  document.getElementById('upgradebutton').value = "AMELIORATION";
+/*  document.getElementById('sellbutton').value = "Vendre";*/
   if(playerHealth > 0){
     for(var i = 0; i < towers.length; i++){
       if(towers[i].sel){
 	if(towers[i].getUpgradeCost() > 0){
-	  document.getElementById('upgradebutton').value = "Upgrade ("+numberFormat(towers[i].getUpgradeCost())+")";
+	  document.getElementById('upgradebutton').value = "AMELIORATION ("+numberFormat(towers[i].getUpgradeCost())+")";
 	  if(gold >= towers[i].getUpgradeCost()){
 	    document.getElementById('upgradebutton').disabled = false;
 	  }
 	}
-	document.getElementById('sellbutton').value = "Sell ("+numberFormat(towers[i].getSellValue())+")";
+/*	document.getElementById('sellbutton').value = "Sell ("+numberFormat(towers[i].getSellValue())+")";*/
 	document.getElementById('sellbutton').disabled = false;
 	break;
       }
@@ -777,14 +838,21 @@ function controlsUpdate(){
   document.getElementById('levelindic').innerHTML = level;
   document.getElementById('goldindic').innerHTML = numberFormat(gold);
   if(playerHealth <= 0){
-    document.getElementById("losetext").setAttribute("style", "visibility:visible;opacity:1");
-  }else{
-    document.getElementById("losetext").setAttribute("style", "visibility:hidden;opacity:0");
+    if(leaderboard_screen.classList.contains('pop-up-animation')==false)
+    {
+      audio.play();
+      document.querySelector('#score').value = level;
+      document.querySelector('.defeat-screen').classList.add('pop-up-animation');
+      document.querySelector('.current-level').innerText = level;
+    }
+  }else
+  {
+    document.querySelector('.defeat-screen').classList.remove('pop-up-animation');
   }
 }
 
 function restart(){
-  if(!confirm("Are you sure you want to restart?")) return;
+  if(!confirm("Voulez vous vraiment recommencer ?")) return;
   towers = new Array();
   mobs = new Array();
   flakes = new Array();
@@ -904,7 +972,7 @@ function genPath(){
   return (path != -1);
 }
 
-document.onkeydown = function (e){
+/*document.onkeydown = function (e){
   var c = e.which;
   if(c == 85){ // u
     upgrade();
@@ -925,4 +993,4 @@ document.onkeydown = function (e){
       ctower=true;towerType=4;
     }
   }
-}
+}*/
